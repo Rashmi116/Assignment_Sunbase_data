@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer List</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+        <script>
+            function deleteCustomer(uuid) {
+                fetch('/deleteCustomer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cmd: "delete", uuid: uuid })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Customer successfully deleted');
+                        window.location.reload(); // Reload the page to update the list
+                    } else {
+                        alert('Error deleting customer');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            function updateCustomer(uuid) {
+                // Implementation depends on how you want to handle updates (e.g., a form or modal)
+                alert('Update functionality not implemented');
+            }
+            function navigateToNewCustomer() {
+                window.location.href = '/newcustomer';
+            }
+
+            function updateCustomer(uuid, firstName, lastName, street, address, city, state, email, phone) {
+                // Store the customer data in localStorage or sessionStorage
+                const customerData = { uuid, firstName, lastName, street, address, city, state, email, phone };
+                localStorage.setItem('editCustomer', JSON.stringify(customerData));
+
+                // Redirect to the newcustomer form
+                window.location.href = '/newcustomer';
+            }
+    
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('/getCustomers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('customerTableBody');
+                    data.forEach(customer => {
+                        let row = `<tr>
+                            <td>${customer.first_name}</td>
+                            <td>${customer.last_name}</td>
+                            <td>${customer.street}</td>
+                            <td>${customer.address}</td>
+                            <td>${customer.city}</td>
+                            <td>${customer.state}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.phone}</td>
+                            <td><button onclick="updateCustomer('${customer.uuid}', '${customer.first_name}', '${customer.last_name}', '${customer.street}', '${customer.address}', '${customer.city}', '${customer.state}', '${customer.email}', '${customer.phone}')">Update</button></td>
+                            <td><button onclick="deleteCustomer('${customer.uuid}')">Delete</button></td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        </script>
+</head>
+<body>
+    <h1>Customer List</h1>
+    <button onclick="navigateToNewCustomer()">New Customer</button>
+    <table id="customerTable">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Street</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody id="customerTableBody">
+            <!-- Customers will be loaded here -->
+        </tbody>
+    </table>
+</body>
+</html>

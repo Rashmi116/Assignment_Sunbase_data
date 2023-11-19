@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Form</title>
+</head>
+<body>
+    <h2>Login Form</h2>
+	<form id="loginForm" method="post">
+		<div>
+			<label for="login_id">Login ID:</label>
+			<input type="text" id="login_id" name="login_id">
+		</div>
+		<div>
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password">
+		</div>
+		<div>
+			<button type="submit">Login</button>
+		</div>
+	</form>
+
+	<script>
+		document.getElementById('loginForm').addEventListener('submit', function(event) {
+			event.preventDefault();
+	
+			const loginId = document.getElementById('login_id').value;
+			const password = document.getElementById('password').value;
+	
+			const data = {
+				login_id: loginId,
+				password: password
+			};
+	
+			fetch('http://localhost:8080/authenticate', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(response => {
+				if (response.ok) { // Checks if status code is 200-299
+					window.location.href = '/customer';
+				} else {
+					console.error('Authentication failed');
+				}
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+		});
+	</script>
+
+
+
+
+	<!-- <script>
+		document.getElementById('loginForm').addEventListener('submit', function(event) {
+			// Prevent the default form submission
+			event.preventDefault();
+	
+			// Get the form data
+			const loginId = document.getElementById('login_id').value;
+			const password = document.getElementById('password').value;
+	
+			// Create a JSON object with the form data
+			const data = {
+				"login_id": loginId,
+				"password": password
+			};
+	
+			// Send the JSON data to the Spring Boot backend
+			fetch('http://localhost:8080/authenticate', {  // Replace with your actual endpoint
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log('Success:', data);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+		});
+	</script> -->
+</body>
+</html>
